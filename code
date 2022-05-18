@@ -1,0 +1,120 @@
+
+<?php
+
+$conn=mysqli_connect("localhost","user","","mydb");
+if(!$conn){
+    echo"error";
+}
+?>
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+
+
+</head>
+
+<body>
+    <div >
+        <h1>User Registration Portal</h1>
+        <form action="./registration.php" method="post">
+            <input type="text" placeholder="Enter Username" name="username">
+            <input type="password" placeholder="Enter password" name="password">
+            <button type="submit" name="submit">Sign In</button>
+        </form>
+    </div>
+    <div >
+        <h1>User Login Portal</h1>
+        <form action="./validation.php" method="post">
+            <input type="text" placeholder="Enter Username" name="username">
+            <input type="password" placeholder="Enter password" name="password">
+            <button type="submit" name="submit">Log In</button>
+        </form>
+    </div>
+</body>
+
+</html>
+
+
+registration.php
+
+
+<?php
+include "db.php";
+    session_start();
+    header('location:login.php');
+     mysqli_select_db($conn,'mydb');
+    $username=$_POST['username'];
+    $password=$_POST['password'];
+    $qr="SELECT *from user where username='$username' && 'password=$password'";
+    $result=mysqli_query($conn,$qr);
+    $num=mysqli_num_rows($result);
+    if($num == 1){
+        echo "Already Registered! Try To login";
+    }else{
+        $qry="INSERT into user (username,password) values('$username','$password')";
+        mysqli_query($conn,$qry);
+    }
+?>
+
+
+validation.php
+
+
+<?php
+include "db.php";
+    session_start();
+     mysqli_select_db($conn,'mydb');
+    $username=$_POST['username'];
+    $password=$_POST['password'];
+    $qr="SELECT *from user where username='$username' && 'password=$password'";
+    $result=mysqli_query($conn,$qr);
+    $num=mysqli_num_rows($result);
+    if($num == 1){
+       $_SESSION['username']=$username;
+       header('location:home.php');
+    }else{
+        header('location:login.php');
+    }
+
+
+?>
+
+Home.php
+
+
+<?php
+    session_start();
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <h2>Welcome to Homepage <?=$_SESSION['username'];?> </h2>
+    <a href="./logout.php">LOGOUT</a>
+</body>
+</html>
+
+
+Logout.php
+
+
+<?php
+session_start();
+session_destroy();
+header('location:userlogin.php');
+?>
